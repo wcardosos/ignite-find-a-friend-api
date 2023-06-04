@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id               String   @id @default(uuid())
+  password_hash    String
+  email            String   @unique
+  responsible_name String
+  whatsapp_number  String
+  zipcode          String
+  street           String
+  created_at       DateTime @default(now())
+  pets             Pet[]
+
+  @@map("organizations")
+}
+
+model Pet {
+  id                 String               @id @default(uuid())
+  name               String
+  description        String
+  age                PetAge
+  size               PetSize
+  energy_level       PetEnergyLevel
+  independence_level PetIndependenceLevel
+  ambience           String
+  created_at         DateTime             @default(now())
+
+  organization         Organization          @relation(fields: [organization_id], references: [id])
+  organization_id      String
+  petAddress           PetAddress?
+  adoptionRequirements AdoptionRequirement[]
+  Adoption             Adoption?
+
+  @@map("pets")
+}
+
+model PetAddress {
+  id           String  @id @default(uuid())
+  street       String
+  house_number String?
+  neighborhood String
+  city         String
+  state        String
+
+  pet    Pet    @relation(fields: [pet_id], references: [id])
+  pet_id String @unique
+}
+
+model Adoption {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+
+  pet    Pet    @relation(fields: [pet_id], references: [id])
+  pet_id String @unique
+
+  @@map("adoptions")
+}
+
+model AdoptionRequirement {
+  id   String @id @default(uuid())
+  name String
+
+  pet   Pet    @relation(fields: [petId], references: [id])
+  petId String
+
+  @@map("adoption_requirements")
+}
+
+enum PetAge {
+  PUPPY
+  ADULT
+  OLD
+}
+
+enum PetSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum PetEnergyLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum PetIndependenceLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum PetAmbience {
+  SMALL
+  LARGE
+}
