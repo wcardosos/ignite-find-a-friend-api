@@ -42,8 +42,9 @@ describe('CreateOrganizationUseCase', () => {
         {} as Organization,
       )
 
-      expect(async () =>
-        createOrganizationUseCase.execute(organizationDataMock),
+      expect(
+        async () =>
+          await createOrganizationUseCase.execute(organizationDataMock),
       ).rejects.toThrowError(OrganizationAlreadyExists)
     })
 
